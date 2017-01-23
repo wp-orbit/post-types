@@ -3,6 +3,7 @@ namespace WPOrbit\PostTypes;
 
 /**
  * Class PostType
+ *
  * @package WPOrbit\PostTypes
  * @see
  */
@@ -17,7 +18,8 @@ abstract class PostType
      * PostType constructor.
      */
     private function __construct()
-    {}
+    {
+    }
 
     /**
      * @return PostType
@@ -55,7 +57,29 @@ abstract class PostType
     /**
      * @var array
      */
-    protected $supports = ['title', 'editor', 'author', 'thumbnail'];
+    protected $supports
+        = [
+            'title',
+            'editor',
+            'author',
+            'thumbnail'
+        ];
+
+    /**
+     * Whether to generate a default UI for managing this post type in the admin.
+     * @var bool
+     */
+    protected $show_ui = true;
+
+    /**
+     * Where to show the post type in the admin menu. show_ui must be true.
+     *
+     * Default: value of show_ui argument
+     * 'false' - do not display in the admin menu
+     * 'true' - display as a top level menu
+     * 'some string' - If an existing top level page such as 'tools.php' or 'edit.php?post_type=page', the post type will be placed as a sub menu of that.
+     */
+    protected $show_in_menu = true;
 
     /**
      * @return string
@@ -104,14 +128,20 @@ abstract class PostType
 
     /**
      * Return a list of customized role capabilities for this post type.
+     *
      * @return array
      */
     public function getCustomCapabilities()
     {
         // String filter.
-        $filter = function($str) {
+        $filter = function ( $str )
+        {
             $str = strtolower( $str );
-            $str = str_replace( [' ', '-'], '_', $str );
+            $str = str_replace( [
+                ' ',
+                '-'
+            ], '_', $str );
+
             return $str;
         };
 
@@ -147,7 +177,7 @@ abstract class PostType
      */
     public function registerPostType()
     {
-        add_action( 'init', function()
+        add_action( 'init', function ()
         {
             $textDomain = 'textdomain';
             $plural = $this->getPlural();
@@ -168,8 +198,8 @@ abstract class PostType
                 'all_items'          => __( 'All ' . $plural . '', $textDomain ),
                 'search_items'       => __( 'Search ' . $plural . '', $textDomain ),
                 'parent_item_colon'  => __( 'Parent ' . $plural . ':', $textDomain ),
-                'not_found'          => __( 'No ' . strtolower($plural) . ' found.', $textDomain ),
-                'not_found_in_trash' => __( 'No ' . strtolower($plural) . ' found in Trash.', $textDomain )
+                'not_found'          => __( 'No ' . strtolower( $plural ) . ' found.', $textDomain ),
+                'not_found_in_trash' => __( 'No ' . strtolower( $plural ) . ' found in Trash.', $textDomain )
             ];
 
             // Declare arguments.
@@ -178,10 +208,10 @@ abstract class PostType
                 'description'        => __( 'Description.', $textDomain ),
                 'public'             => true,
                 'publicly_queryable' => true,
-                'show_ui'            => true,
-                'show_in_menu'       => true,
+                'show_ui'            => $this->show_ui,
+                'show_in_menu'       => $this->show_in_menu,
                 'query_var'          => true,
-                'rewrite'            => ['slug' => $this->slug],
+                'rewrite'            => [ 'slug' => $this->slug ],
                 'has_archive'        => true,
                 'hierarchical'       => false,
                 'menu_position'      => null,
@@ -189,13 +219,14 @@ abstract class PostType
             ];
 
             // If customCapabilities is set to true, then map unique capabilities for this post type.
-            if ( $this->customCapabilities ) {
-                $args['map_meta_cap'] = true;
-                $args['capabilities'] = $this->getCustomCapabilities();
+            if ( $this->customCapabilities )
+            {
+                $args[ 'map_meta_cap' ] = true;
+                $args[ 'capabilities' ] = $this->getCustomCapabilities();
             }
 
             // Register the post type.
             register_post_type( $this->getKey(), $args );
-        });
+        } );
     }
 }
