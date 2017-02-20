@@ -229,4 +229,19 @@ abstract class PostType
             register_post_type( $this->getKey(), $args );
         } );
     }
+
+    /**
+     * @return \WP_Post[]
+     */
+    public static function all()
+    {
+        $query = new \WP_Query([
+            'post_type' => static::getInstance()->getKey(),
+            'nopaging' => true,
+            'orderby' => 'title',
+            'order' => 'ASC'
+        ]);
+
+        return $query->posts;
+    }
 }
