@@ -16,18 +16,18 @@ abstract class AbstractPostType {
 	/**
 	 * @return AbstractPostType
 	 */
-	public static function get_instance() {
+	public static function get_instance()
+	{
 		if ( null === static::$instance ) {
 			static::$instance = new static;
 		}
-
 		return static::$instance;
 	}
 
 	////////////////////////////
 
-	protected function __construct( $args = [] ) {
-
+	protected function __construct( $args = [] )
+	{
 		$args = wp_parse_args( $args, [
 			'text_domain'             => 'wp_orbit',
 			'key'                     => '',
@@ -75,6 +75,9 @@ abstract class AbstractPostType {
 	/** @var array */
 	protected $supports = [];
 
+	/** @var bool */
+	protected $use_custom_capabilities = false;
+
 	/**
 	 * Whether to generate a default UI for managing this post type in the admin.
 	 *
@@ -91,6 +94,7 @@ abstract class AbstractPostType {
 	 * 'some string' - If an existing top level page such as 'tools.php' or 'edit.php?post_type=page', the post type will be placed as a sub menu of that.
 	 */
 	protected $show_in_menu = true;
+
 
 	/** @return string */
 	public function get_key() {
@@ -116,10 +120,6 @@ abstract class AbstractPostType {
 	public function get_plural() {
 		return $this->plural;
 	}
-
-	/** @var bool
-	 */
-	protected $use_custom_capabilities = false;
 
 	/**
 	 * Return a list of customized role capabilities for this post type.
@@ -165,19 +165,22 @@ abstract class AbstractPostType {
 		];
 	}
 
+	/**
+	 * @return array
+	 */
 	public function get_args()
 	{
 		$text_domain = $this->text_domain;
 		$plural      = $this->get_plural();
 		$singular    = $this->get_singular();
-		$menuName    = '' == $this->get_menu_name() ? $this->get_plural() : $this->get_menu_name();
+		$menu_name    = '' == $this->get_menu_name() ? $this->get_plural() : $this->get_menu_name();
 
 		// Prepare post type labels.
 		$labels = [
 			'name'               => _x( $plural, 'post type general name', $text_domain ),
 			'singular_name'      => _x( $singular, 'post type singular name', $text_domain ),
-			'menu_name'          => _x( $menuName, 'admin menu', $text_domain ),
-			'name_admin_bar'     => _x( $menuName, 'add new on admin bar', $text_domain ),
+			'menu_name'          => _x( $menu_name, 'admin menu', $text_domain ),
+			'name_admin_bar'     => _x( $menu_name, 'add new on admin bar', $text_domain ),
 			'add_new'            => _x( 'Add New', $singular, $text_domain ),
 			'add_new_item'       => __( 'Add New ' . $singular . '', $text_domain ),
 			'new_item'           => __( 'New ' . $singular . '', $text_domain ),
@@ -212,9 +215,11 @@ abstract class AbstractPostType {
 			$args['capabilities'] = $this->get_custom_capabilities();
 		}
 
+		// Get class name.
 		$class_name = static::class;
-		return apply_filters( "wp_orbit_register_post_type_args", $args, $class_name );
 
+		// Return filtered arguments.
+		return apply_filters( "wp_orbit_register_post_type_args", $args, $class_name );
 	}
 
 	/**
