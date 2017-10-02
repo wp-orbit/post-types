@@ -37,7 +37,8 @@ abstract class AbstractPostType {
 			'supports'                => [ 'title', 'editor', 'author', 'thumbnail' ],
 			'show_ui'                 => true,
 			'show_in_menu'            => true,
-			'use_custom_capabilities' => false
+			'use_custom_capabilities' => false,
+			'taxonomies'              => []
 		] );
 
 		// Set default arguments.
