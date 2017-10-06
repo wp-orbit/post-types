@@ -76,6 +76,9 @@ abstract class AbstractPostType {
 	/** @var array */
 	protected $supports = [];
 
+	/** @var array */
+	protected $taxonomies = [];
+
 	/** @var bool */
 	protected $use_custom_capabilities = false;
 
@@ -208,6 +211,7 @@ abstract class AbstractPostType {
 			'hierarchical'       => false,
 			'menu_position'      => null,
 			'supports'           => $this->supports,
+			'taxonomies'         => $this->taxonomies
 		];
 
 		// If custom_capabilities is set to true, then map unique capabilities for this post type.
